@@ -34,11 +34,18 @@ data = load_data()
 date = st.date_input("Date", min_value=datetime.today())
 time = st.time_input("Time")
 client = st.text_input("Client Name")
-description = st.textarea("Appointment Description")
+
+# Using st.text_input as a workaround for st.textarea issues
+description = st.text_input("Appointment Description", max_chars=500)
 
 # Button to add a new appointment
 if st.button('Add Appointment'):
-    new_data = {'Date': date.strftime('%Y-%m-%d'), 'Time': time.strftime('%H:%M'), 'Client': client, 'Description': description}
+    new_data = {
+        'Date': date.strftime('%Y-%m-%d'), 
+        'Time': time.strftime('%H:%M'), 
+        'Client': client, 
+        'Description': description
+    }
     data = data.append(new_data, ignore_index=True)
     save_data(data)
     st.success('Appointment added!')
