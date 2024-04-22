@@ -3,13 +3,12 @@ import pandas as pd
 import json
 from datetime import datetime
 
-# Function to load data
+# Function to load data from a JSON file
 def load_data():
     try:
         with open('appointments.json', 'r') as file:
             data = json.load(file)
             appointments = pd.json_normalize(data)
-            st.write("Loaded data successfully!")  # Debug message
     except FileNotFoundError:
         st.error("File not found. Creating a new file.")
         appointments = pd.DataFrame(columns=['Date', 'Time', 'Client', 'Description'])
@@ -18,15 +17,14 @@ def load_data():
         appointments = pd.DataFrame(columns=['Date', 'Time', 'Client', 'Description'])
     return appointments
 
-# Function to save data
+# Function to save data to a JSON file
 def save_data(df):
     try:
         df.to_json('appointments.json', orient='records', date_format='iso', indent=4)
-        st.write("Data saved successfully!")  # Debug message
     except Exception as e:
         st.error(f"An error occurred while saving: {str(e)}")
 
-# Title of the app
+# Streamlit application layout
 st.title('Book a New Appointment')
 
 # Load existing data
@@ -45,5 +43,5 @@ if st.button('Add Appointment'):
     save_data(data)
     st.success('Appointment added!')
 
-# Show table of appointments
+# Display the table of appointments
 st.write(data)
