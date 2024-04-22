@@ -11,10 +11,10 @@ def load_data():
             appointments = pd.json_normalize(data)
     except FileNotFoundError:
         st.error("File not found. Creating a new file.")
-        appointments = pd.DataFrame(columns=['Date', 'Time', 'Client', 'Description'])
+        appointments = pd.DataFrame(columns=['Date', 'Time', 'Client'])
     except json.JSONDecodeError:
         st.error("JSON Decode Error. Check the file's format.")
-        appointments = pd.DataFrame(columns=['Date', 'Time', 'Client', 'Description'])
+        appointments = pd.DataFrame(columns=['Date', 'Time', 'Client'])
     return appointments
 
 # Function to save data to a JSON file
@@ -35,18 +35,14 @@ date = st.date_input("Date", min_value=datetime.today())
 time = st.time_input("Time")
 client = st.text_input("Client Name")
 
-# Using st.text_input as a workaround for st.textarea issues
-description = st.text_input("Appointment Description", max_chars=500)
-
 # Button to add a new appointment
 if st.button('Add Appointment'):
-    new_data = {
-        'Date': date.strftime('%Y-%m-%d'), 
-        'Time': time.strftime('%H:%M'), 
-        'Client': client, 
-        'Description': description
-    }
-    data = data.append(new_data, ignore_index=True)
+    new_data = pd.DataFrame({
+        'Date': [date.strftime('%Y-%m-%d')],
+        'Time': [time.strftime('%H:%M')],
+        'Client': [client]
+    })
+    data = pd.concat([data, new_data], ignore_index=True)  # Use concat instead of append
     save_data(data)
     st.success('Appointment added!')
 
