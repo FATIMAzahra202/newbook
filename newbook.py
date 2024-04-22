@@ -42,9 +42,32 @@ if st.button('Add Appointment'):
         'Time': [time.strftime('%H:%M')],
         'Client': [client]
     })
-    data = pd.concat([data, new_data], ignore_index=True)  # Use concat instead of append
+    data = pd.concat([data, new_data], ignore_index=True)
     save_data(data)
     st.success('Appointment added!')
 
+# Option to select an appointment to delete
+if not data.empty:
+    st.write("Select an appointment to delete:")
+    selected_index = st.selectbox("Select Appointment", data.index)
+    if st.button("Delete Appointment"):
+        data = data.drop(index=selected_index)
+        save_data(data)
+        st.success("Appointment deleted!")
+
+# Button to download data
+def convert_df(df):
+    return df.to_csv(index=False).encode('utf-8')
+
+if not data.empty:
+    csv = convert_df(data)
+    st.download_button(
+        label="Download appointment data as CSV",
+        data=csv,
+        file_name='appointments.csv',
+        mime='text/csv',
+    )
+
 # Display the table of appointments
 st.write(data)
+
