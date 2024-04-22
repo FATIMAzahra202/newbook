@@ -7,14 +7,24 @@ from datetime import datetime
 def load_data():
     try:
         with open('appointments.json', 'r') as file:
-            appointments = pd.json_normalize(json.load(file))
-    except (FileNotFoundError, ValueError):
+            data = json.load(file)
+            appointments = pd.json_normalize(data)
+            st.write("Loaded data successfully!")  # Debug message
+    except FileNotFoundError:
+        st.error("File not found. Creating a new file.")
+        appointments = pd.DataFrame(columns=['Date', 'Time', 'Client', 'Description'])
+    except json.JSONDecodeError:
+        st.error("JSON Decode Error. Check the file's format.")
         appointments = pd.DataFrame(columns=['Date', 'Time', 'Client', 'Description'])
     return appointments
 
 # Function to save data
 def save_data(df):
-    df.to_json('appointments.json', orient='records', date_format='iso', indent=4)
+    try:
+        df.to_json('appointments.json', orient='records', date_format='iso', indent=4)
+        st.write("Data saved successfully!")  # Debug message
+    except Exception as e:
+        st.error(f"An error occurred while saving: {str(e)}")
 
 # Title of the app
 st.title('Book a New Appointment')
